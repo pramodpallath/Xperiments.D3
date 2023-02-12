@@ -1,4 +1,5 @@
 var data = {
+    
     "name": "Pramod", "children": [
         { "name": "Software", "children": [
             {"name":"Microservices"},
@@ -16,10 +17,12 @@ var data = {
 };
 
 var settings = {
-    width: 500,
-    height: 500,
+    width: 400,
+    height: 400,
     offset:20
 };
+let diameter = settings.height * 0.75;
+let radius = diameter / 2;
 
 var dataContainerEl = d3.select("#data-container");
 var svg = d3.select("#visualizer-container");
@@ -30,58 +33,62 @@ svg
     .attr('height', settings.height);
 
 
+
 var root = d3.hierarchy(data)
     .sort((a, b) => b.height - a.height || a.data.name.localeCompare(b.data.name));
 
-var radius = 100;
 
-var treeLayout = d3.cluster()
-    .size([settings.width, settings.height - (settings.offset * 2)]);
 
-treeLayout(root);
-console.log(root);
-
-dataContainerEl
-    .selectAll("p")
-    .data(root.descendants())
-    .join("p")
-    .attr("class", "bg-indigo-200 rounded p-2")
-    .style("margin-left", d => d.depth * 10)
-    .text((d) => {
-
-        return d.data.name + "depth:" + d.depth + " x:" + d.x + " y:" + d.y
-    })
+var treeLayout = d3.tree()
+    .size([2 * Math.PI, radius])
+    .separation(function(a, b) { 
+        
+        return (a.parent == b.parent ? 1 : 2) / a.depth; 
+    });
 
     
 
-    svg
-    .selectAll("line")
-    .data(root.links())
-    .join("line")
-    .attr("x1", d => d.source.x)
-    .attr("y1", d => d.source.y + settings.offset)
-    .attr("x2", d => d.target.x)
-    .attr("y2", d => d.target.y + settings.offset)
-    .style("stroke", "rgb(255,0,0)")
-    .style("stroke-width", 1);
+var trData = treeLayout(root);
+console.log({raw:data, root: root, links: trData.links(), nodes : trData.descendants() });
+
+//place a g element on center
+let groupCenter = svg
+    .append("g")
+    .attr("transform", "translate("+(settings.width/2) + ","+(settings.height/2)+")");
+    
+
+//append the link with radial link which allows to put the angle and radius
+    groupCenter.selectAll(".link")
+    .data(trData.links())
+    .join("path")
+    .attr("class", "link")
+    .attr("fill", "none")
+    .attr("stroke", "#ccc")
+    .attr("d", d3.linkRadial()
+        .angle(d => d.x)
+        .radius(d => d.y));
 
 
-var gNodes = svg
-    .selectAll("g.node")
-    .attr("fill", "#40F99B")
+let nodes = groupCenter
+    .selectAll(".node")
     .data(root.descendants())
     .join("g")
-    .attr("transform", function (d) { return "translate(" + d.x + "," + (d.y+ settings.offset) + ")" });
+    .attr("class", "node")
+    .attr("transform", d => {
+        return `rotate(${d.x * 180 / Math.PI - 90}) translate(${d.y}, 0)`
+    });
 
-gNodes
+nodes
     .append("circle")
     .attr("r", d => 10)
     .attr("cx", d => 0)
     .attr("cy", d => 0);
 
-gNodes
-    .append("text")
-    .attr("dx", 20)
-    .text(d => d.data.name);
+    
+    var nodeDatas = root.descendants();
+    
+    var links = root.links();
+    console.log({links: links, nodeDatas : nodeDatas});
+    
 
 
