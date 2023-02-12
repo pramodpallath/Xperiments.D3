@@ -30,12 +30,24 @@
     <!--end sidebar-->
 
     <!--start content-->
-    <div class="flex-1 bg-red-800">hi</div>
+    <div class="flex-1  flex">
+
+      <svg id="visualizer-container" class=" m-4 rounded-md border border-blue-800">
+
+      </svg>
+
+      <div id="data-container">
+
+      </div>
+
+    </div>
     <!--end content-->
   </div>
 </div>
 
 <script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.2/d3.min.js"></script>
+<script src="d3-js-simple-network-diagram.js"></script>
 <script>
   tailwind.config = {
     theme: {
