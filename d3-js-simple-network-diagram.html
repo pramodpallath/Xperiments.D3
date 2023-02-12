@@ -15,10 +15,16 @@
       <!--end logo-->
 
       <!--Start menu-->
-      <div class="p-4">
-        <a href="/d3-js-simple-network-diagram.html"
-          >Simple Network Diagram in D3</a
-        >
+      
+      <div class="p-4 flex flex-col">
+        <a class="block" href="/d3-js-simple-network-diagram.html"
+          >Simple Network Diagram in D3</a>
+        
+        <a class="block" href="/d3-js-simple-network-diagram-with-group.html"
+          >Simple Network Diagram in D3 - Grouped</a>
+          
+        <a class="block" href="/d3-js-simple-network-diagram-radial.html"
+        >Simple Network Diagram in D3 - Radial</a>
       </div>
       <!--end menu-->
 
@@ -31,14 +37,19 @@
 
     <!--start content-->
     <div class="flex-1  flex">
+      
+      <div id="data-container" class="flex flex-col space-y-1">
+      </div>
 
       <svg id="visualizer-container" class=" m-4 rounded-md border border-blue-800">
+        
 
+        
       </svg>
+      
 
-      <div id="data-container">
+      
 
-      </div>
 
     </div>
     <!--end content-->
