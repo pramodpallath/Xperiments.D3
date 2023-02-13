@@ -84,6 +84,19 @@ nodes
     .attr("cx", d => 0)
     .attr("cy", d => 0);
 
+
+nodes
+    .append("text")
+    .attr("dx", 25)
+    .attr("dy", 25)
+    .attr("text-anchor", function(d) { 
+        return d.x < Math.PI ? "start" : "end"; 
+    })
+    .attr("transform", function(d) { 
+        return `rotate(${-1* ( d.x * 180 / Math.PI - 90)})`; 
+    })
+    .text(d => d.data.name);
+
     
     var nodeDatas = root.descendants();
     
