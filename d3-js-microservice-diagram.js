@@ -5,21 +5,21 @@ var settings = {
 };
 
 var forcesY = {
-    2: -100,
-    1: 0,
-    3: 0,
-    4: 400,
-    5: 0,
-    6: 800
+    // 2: -100,
+    // 1: 0,
+    // 3: 0,
+    // 4: 400,
+    // 5: 0,
+    // 6: 800
 };
 var radiuses = {
     1: 80
 }
 var typeRadiuses = {
     "microservice": 50,
-    "apigateway": 100,
+    "apigateway": 50,
     "mobile": 50,
-    "esb": 60
+    "esb": 50
 }
 var typeXForces = {
     "microservice": 500,
@@ -40,8 +40,8 @@ var typeYForces = {
 
 var forcesX = {
     1: settings.width / 2,
-    7: -400,
-    5: -500
+    // 7: -400,
+    // 5: -500
 };
 
 var flowDetails = [
@@ -51,8 +51,21 @@ var flowDetails = [
     },
     {
         "key": "f2",
-        "name": "Initiate & Fetch PWA Url"
+        "name": "Fetch Product Details"
+    },
+    {
+        "key": "f3",
+        "name": "Capture Customer Details"
+    },
+    {
+        "key": "f4",
+        "name": "Send Email & SMS OTP"
+    },
+    {
+        "key": "f5",
+        "name": "Mobile / Email OTP Verification"
     }
+
 ];
 
 var data = {
@@ -64,11 +77,11 @@ var data = {
         { "id": 5, "name": "BFF", "type": "bff", "width": 2, "weight": 1, "distance": 1, "flow": "f2" },
         { "id": 6, "name": "PWA - Product Details", "type": "ui", "width": 2, "weight": 1, "distance": 1, "flow": "f2" },
         { "id": 7, "name": "Partner Products", "type": "microservice", "width": 2, "weight": 5, "distance": 8, "flow": "f1" },
-        { "id": 8, "name": "BFF", "type": "bff", "width": 2, "weight": 1, "distance": 1 },
-        { "id": 9, "name": "PWA - Capture Customer Details", "type": "ui", "width": 2, "weight": 1, "distance": 1 },
-        { "id": 10, "name": "ESB OTP Generator", "type": "esb", "width": 2, "weight": 5, "distance": 1 },
-        { "id": 11, "name": "BFF", "type": "bff", "width": 2, "weight": 1, "distance": 1 },
-        { "id": 12, "name": "PWA - Validate OTP", "type": "ui", "width": 2, "weight": 1, "distance": 1 },
+        { "id": 8, "name": "BFF", "type": "bff", "width": 2, "weight": 1, "distance": 1, "flow": "f3" },
+        { "id": 9, "name": "PWA - Capture Customer Details", "type": "ui", "width": 2, "weight": 1, "distance": 1, "flow": "f3" },
+        { "id": 10, "name": "OTP Generator", "type": "microservice", "width": 2, "weight": 5, "distance": 1, "flow":"f4" },
+        { "id": 11, "name": "BFF", "type": "bff", "width": 2, "weight": 1, "distance": 1, "flow":"f5" },
+        { "id": 12, "name": "PWA - Validate OTP", "type": "ui", "width": 2, "weight": 1, "distance": 1, "flow":"f5" },
         { "id": 13, "name": "OTP Validation", "type": "microservice", "width": 2, "weight": 1, "distance": 1 },
         { "id": 14, "name": "Application Dedupe", "type": "microservice", "width": 2, "weight": 1, "distance": 1 },
         { "id": 15, "name": "BFF", "type": "bff", "width": 2, "weight": 1, "distance": 1 },
@@ -102,11 +115,11 @@ var data = {
         { "source": 1, "target": 5, "flow": "f2" },
         { "source": 5, "target": 6, "flow": "f2" },
         { "source": 1, "target": 7, "flow": "f1" },
-        { "source": 1, "target": 8, "flow": "f" },
-        { "source": 8, "target": 9 },
-        { "source": 1, "target": 10 },
-        { "source": 1, "target": 11 },
-        { "source": 11, "target": 12 },
+        { "source": 1, "target": 8, "flow": "f3" },
+        { "source": 8, "target": 9, "flow": "f3" },
+        { "source": 1, "target": 10, "flow":"f4" },
+        { "source": 1, "target": 11, "flow":"f5" },
+        { "source": 11, "target": 12, "flow":"f5" },
         { "source": 1, "target": 13 },
         { "source": 1, "target": 14 },
         { "source": 1, "target": 15 },
@@ -171,31 +184,43 @@ let groupCenter = svg
 //.attr("transform", "translate(" + (settings.width / 2) + "," + (settings.height / 2) + ")");
 
 var infoGroup = svg.append("g")
-    .attr("transform", "translate(" + (0) + "," + (settings.height / 2) + ")")
+    .attr("class", "infogroup")
+    .attr("transform", "translate(" + (0) + "," + (0) + ")")
 
 var info = infoGroup.append("rect")
     .attr("x", 0)
     .attr("y", 0)
-    .attr("height", 300)
+    .attr("height", settings.height)
     .attr("width", 300)
-    .style("fill", "orange");
+    .style("fill", "#fafaf9");
 
 
 
 var ec = infoGroup
-    .selectAll("g.eventContainer")
+    .selectAll("g.eventcontainer")
     .data(flowDetails)
     .enter()
     .append("g")
-    .attr("class", "eventContainer")
-    .attr("transform", (d, i) => "translate(" + (0) + "," + (i+1) * 15 + ")")
+    .attr("class", "eventcontainer")
+    .attr("transform", (d, i) => "translate(" + (0) + "," + (i+1) * 30 + ")")
     ;
 
-ec
+var ecRect = ec
+    .append("rect")
+    .attr("x", 0)
+    .attr("y", -30)
+    .attr("width", 300)
+    .attr("height", 30)
+    .style("fill", "#fafaf9")
+    .style("stroke", "#f5f5f4");
+
+var eventHeadings = ec
     .append("text")
     .attr("class", "event")
-    .style("fill-opacity", 1)
     .style("pointer-events", 'auto')
+    .style("cursor", "pointer")
+    .attr('text-anchor', 'start')
+    .attr("y", -11)
     .text((d,i) => `${i+1}. ${d.name}`);
 
 ec.on('click', function(e){
@@ -340,9 +365,9 @@ var esbList = node
     .append("path")
     .attr("d", "M86.242 18V9.273h5.267v.937H87.3v2.95h3.938v.937h-3.938v2.966h4.279V18h-5.336Zm11.945-6.546a1.338 1.338 0 0 0-.622-1.005c-.364-.239-.81-.358-1.338-.358-.387 0-.725.062-1.014.187a1.62 1.62 0 0 0-.674.516c-.159.219-.238.467-.238.746 0 .233.055.433.166.6.113.165.258.303.434.414.177.108.361.197.554.268.194.069.371.124.533.167l.886.238c.228.06.48.142.759.247.281.105.55.249.805.43.259.18.472.41.64.691.167.281.251.627.251 1.036 0 .471-.124.897-.37 1.278-.245.38-.603.683-1.075.908-.468.224-1.038.336-1.708.336-.625 0-1.167-.1-1.624-.302a2.587 2.587 0 0 1-1.074-.844 2.407 2.407 0 0 1-.439-1.257h1.091c.029.33.14.602.333.818.196.213.443.372.741.477.301.103.625.154.972.154a2.86 2.86 0 0 0 1.086-.196c.321-.134.576-.318.763-.554.188-.239.281-.517.281-.835 0-.29-.08-.526-.243-.708a1.782 1.782 0 0 0-.639-.443 6.7 6.7 0 0 0-.856-.298l-1.074-.307c-.682-.196-1.222-.476-1.62-.84-.397-.363-.596-.839-.596-1.427 0-.489.132-.915.396-1.278.267-.367.625-.651 1.074-.853a3.627 3.627 0 0 1 1.513-.307c.562 0 1.062.101 1.5.303.437.199.784.472 1.04.818.258.347.394.74.409 1.18h-1.023Zm2.88 6.546V9.273h3.051c.608 0 1.109.105 1.504.315.395.207.689.487.882.84.193.349.29.737.29 1.163 0 .375-.067.685-.2.929a1.56 1.56 0 0 1-.52.58 2.367 2.367 0 0 1-.695.315v.085c.267.017.536.11.805.281.27.17.496.415.678.733.182.318.273.708.273 1.168 0 .437-.1.83-.299 1.18-.198.35-.512.627-.941.831-.429.205-.988.307-1.675.307h-3.153Zm1.056-.938h2.097c.69 0 1.18-.133 1.47-.4.293-.27.439-.597.439-.98 0-.296-.075-.568-.226-.818a1.632 1.632 0 0 0-.643-.606 2.02 2.02 0 0 0-.989-.23h-2.148v3.034Zm0-3.954h1.961c.318 0 .605-.063.86-.188.259-.124.463-.3.614-.528a1.4 1.4 0 0 0 .23-.801c0-.384-.133-.709-.4-.976-.267-.27-.691-.405-1.27-.405h-1.995v2.898Z")
     .attr("stroke", "#3f3f46")
-    .attr("fill", "#a1a1aa")
+    .attr("fill", "#a1a1aa")    
     .attr("class", "node")
-    .attr("transform", "scale(1)")
+    .attr("transform", "scale(1) translate(-70 0)")
     ;
 
 
@@ -428,6 +453,20 @@ function highlight(e, selectedData) {
         .filter(d => d.flow == selectedData.flow)
         .transition().duration(200)
         .attr('class', 'highlight');
+
+        ec.attr("class", "");
+        ec
+            .filter(d => d.key == selectedData.flow)
+            .transition().duration(200)
+            .attr("class", "highlight");
+            ecRect
+            .transition().duration(200)
+            .style("fill", "#fafaf9");
+            
+            ecRect
+            .filter(d => d.key == selectedData.flow)
+            .transition().duration(200)
+            .style("fill", "#e7e5e4");
 
 }
 
