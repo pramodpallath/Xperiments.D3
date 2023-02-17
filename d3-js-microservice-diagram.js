@@ -99,14 +99,6 @@ var data = {
         { "id": 27, "name": "Internal DBR", "type": "microservice", "width": 2, "weight": 1, "distance": 1 },
         { "id": 28, "name": "Deliquency", "type": "microservice", "width": 2, "weight": 2, "distance": 1 },
         { "id": 29, "name": "BRMS", "type": "microservice", "width": 2, "weight": 1, "distance": 1 },
-
-        //  
-        // {"id":2, "name":"EFR", "type":"microservice", "width":2,"weight":1, "distance": 4},
-        // {"id":3, "name":"BFF", "type":"bff", "width":2,"weight":1, "distance": 1},     
-        // {"id":5, "name":"AECB", "type":"microservice", "width":2,"weight":1, "distance": 1}   ,
-        // {"id":6, "name":"Internal DBR", "type":"microservice", "width":2,"weight":1, "distance": 1}   ,
-
-
     ],
     links: [
         { "source": 1, "target": 2, "flow": "f1" },
