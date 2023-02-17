@@ -1,7 +1,12 @@
+<style>
+  .highlight{
+    background: red;
+  }
+</style>
 <div class="flex h-screen">
   <div class="flex-1 flex bg-indigo-50">
     <!--start sidebar-->
-    <div class="bg-gray-50 shadow-lg flex flex-col justify-between">
+    <div class="bg-gray-50 shadow-lg flex flex-col justify-between hidden">
       <!--start logo-->
       <div class="flex justify-left">
         <a href="https://pramodpallath.com">
@@ -45,7 +50,7 @@
     <!--end sidebar-->
 
     <!--start content-->
-    <div class="flex-1  flex">
+    <div class="flex-1  flex flex-row">
 
     
       
@@ -56,9 +61,15 @@
         
       </svg>
       
+      <div class="flex-none flex space-2 flex-col">
 
-      
-
+<button class="border rounded " onclick="zoomIn()">Zoom in</button>
+<button class="border rounded "onclick="zoomOut()">Zoom out</button>
+<button class="border rounded "onclick="resetZoom()">Reset zoom</button>
+<button class="border rounded "onclick="panLeft()">Pan left</button>
+<button class="border rounded "onclick="panRight()">Pan right</button>
+<button class="border rounded "onclick="center()">Center</button>
+</div>
 
     </div>
     <!--end content-->
