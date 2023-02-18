@@ -478,7 +478,8 @@ var simulation = d3.forceSimulation(data.nodes)
     //.force("x", d3.forceX(settings.width).strength(0.4))
     //.force("y", d3.forceY(settings.height).strength(0.2))
     .force("charge", d3.forceManyBody().strength(d => d.weight * -600))//repulse
-    .force("center", d3.forceCenter(settings.width - 100, settings.height - 450))//attract to center
+    .force("center", d3.forceCenter(settings.width - 100, 
+            settings.height - 450))//attract to center
     .force("y", d3.forceY(d => {
         //debugger;
         // if (forcesY[d.id]) {

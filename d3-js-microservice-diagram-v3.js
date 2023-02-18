@@ -64,16 +64,11 @@ var connector = nodesElGrp
 var microserviceList = nodesElGrp
     .filter(d => d.type == nodeType.Microservice)
     .append("path")
-    .attr("d", d3.symbol().type(hexagon).size(d => 50))
+    .attr("d", d3.symbol().type(hexagon).size(d => 20))
     .attr("stroke", "#2563eb")
     .attr("fill", "#93c5fd")
     .attr("class", "node")
-    .call(
-        d3.drag()
-            .on("start", dragStarted)
-            .on("end", dragEnded)
-            .on("drag", dragged)
-    )
+   
     ;
 
     
@@ -81,20 +76,20 @@ var microserviceList = nodesElGrp
 var apigatewayList = nodesElGrp
     .filter(d => d.type == nodeType.APIGateway)
     .append("path")
-    .attr("d", d3.symbol().type(apigatewaySymbol).size(d => 50))
+    .attr("d", d3.symbol().type(apigatewaySymbol).size(d => 20))
     .attr("stroke", "#2563eb")
     .attr("fill", "#93c5fd")
     .attr("class", "node")
 
     ;
 
-var apigatewayList = nodesElGrp
-    .filter(d => d.type == nodeType.APIGateway)
-    .append("path")
-    .attr("d", d3.symbol().type(apigatewaySymbol2).size(d => 50))
-    .attr("stroke", "#2563eb")
-    .attr("fill", "#2563eb")
-    .attr("class", "node");
+// var apigatewayList = nodesElGrp
+//     .filter(d => d.type == nodeType.APIGateway)
+//     .append("path")
+//     .attr("d", d3.symbol().type(apigatewaySymbol2).size(d => 20))
+//     .attr("stroke", "#2563eb")
+//     .attr("fill", "#2563eb")
+//     .attr("class", "node");
 
 
     
@@ -123,6 +118,16 @@ console.log(rawData);
 
 /*Force */
 
+const simulation = d3.forceSimulation(diagramData.Nodes)
+    .force("charge", d3.forceManyBody())
+    .force("link", 
+        d3.forceLink(diagramData.Connections)
+            .id(d => d.name)
+    )
+    .force("center", d3.forceCenter()) 
+    
+    .on("tick", ticked);
+
 var forceSimulation = d3
     .forceSimulation(diagramData.Nodes)
     
@@ -132,18 +137,17 @@ var forceSimulation = d3
             .id(function (d) { return d.name })
             .links(diagramData.Connections)
     )
-    .force("charge", d3.forceManyBody().strength(-900))
+    .force("charge", d3.forceManyBody().strength(-500))
     .force("center", d3.forceCenter(settings.width / 2, settings.height / 2))
+    //.force("y", d3.forceY().y(d => d.type == nodeType.Microservice ? 100 : 900))
     .force("collision", d3.forceCollide(d => {
-        var radius = 50;
+        var radius = 60;
         return radius;
     }))
     
     .on("tick", ticked);
 
-
-function ticked() {
-
+function ticked(){
     linesEl
         .attr("x1", d => d.source.x)
         .attr("x2", d => d.target.x)
@@ -153,35 +157,19 @@ function ticked() {
     nodesElGrp
         .attr("transform", d => `translate(${d.x},${d.y})`)
 }
-/*Force End*/
 
-function dragSubject(event){
-    console.log({msg:"Drag Sub", event});
-    return forceSimulation.find(event.x, event.y);
+//create zoomBehaviour
+let zoom = d3.zoom();
+zoom.on("zoom", handleZoom);
+
+d3.select('svg')
+    .call(zoom);
+
+function handleZoom(e){
+    diagramGroup.attr('transform', e.transform);
 }
 
-function dragged(event, d) {
-    console.log({msg:"dragged", event});
-    //d3.select(this).attr("cx", d.x = event.x).attr("cy", d.y = event.y);
-    event.subject.fx = event.x;
-    event.subject.fy = event.y;
-  }
-
-function dragStarted(event, d){
-    console.log({msg:"dragStarted", event});
-    if(!event.active) forceSimulation.alphaTarget(0.3).restart();
-    event.subject.fx = event.subject.x;
-    event.subject.fy = event.subject.y;
-    d.fixed = true;
-}
-function dragEnded(event, d){
-    console.log({msg:"dragEnded", event});
-    if(!event.active) forceSimulation.alphaTarget(0);
-    event.subject.fx = null;
-    event.subject.fy = null;
-}
-
-let zoom = d3.zoom()
-    .on('zoom', handleZoom);
-
-initZoom();
+// var force = d3.layout.force()
+//     .size([settings.width, setting.height])
+//     .charge(-400)
+//     .linkDistance(40)
